@@ -17,6 +17,37 @@ function handleTree(list) {
   });
 }
 
+// 数组去重
+function unique(arr) {
+  return [...new Set(arr)]
+}
+
+// 检测是否是数组
+function isArray(arr) {
+  return Array.isArray(arr)
+}
+
+function extractQuery(query, like) {
+  let filter = {}
+  if (!query) {
+    return filter
+  }
+
+  for (let key in query) {
+    const value = query[key]
+    if (!!value) {
+      if (query[key] !== like) {
+        filter[key] = value
+      }
+    }
+  }
+  return filter
+}
+
+
 module.exports = {
-  handleTree
+  handleTree,
+  isArray,
+  unique,
+  extractQuery
 }

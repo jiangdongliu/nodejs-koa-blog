@@ -9,12 +9,12 @@ const Router = require('koa-router')
 const {
   RegisterValidator,
   AdminLoginValidator
-} = require('../../validators/admin')
+} = require('@validators/admin')
 
-const {AdminDao} = require('../../dao/admin');
-const {Auth} = require('../../../middlewares/auth');
-const {LoginManager} = require('../../service/login');
-const {Resolve} = require('../../lib/helper');
+const { AdminDao } = require('@dao/admin');
+const { Auth } = require('@middlewares/auth');
+const { LoginManager } = require('@service/login');
+const { Resolve } = require('@lib/helper');
 const res = new Resolve();
 
 const AUTH_ADMIN = 16;
@@ -35,7 +35,7 @@ router.post('/register', async (ctx) => {
     nickname: v.get('body.nickname')
   });
 
-  if(!err) {
+  if (!err) {
     // 返回结果
     ctx.response.status = 200;
     ctx.body = res.json(data);
@@ -49,29 +49,28 @@ router.post('/register', async (ctx) => {
 router.post('/login', async (ctx) => {
   const v = await new AdminLoginValidator().validate(ctx);
 
-  let token = await LoginManager.adminLogin({
+  const [err, token] = await LoginManager.adminLogin({
     email: v.get('body.email'),
     password: v.get('body.password')
-  });
+  })
 
-  ctx.response.status = 200;
-  ctx.body = {
-    code: 200,
-    msg: '登录成功',
-    token
+  if (!err) {
+    ctx.response.status = 200;
+    ctx.body = res.json({ token });
+  } else {
+    ctx.body = res.fail(err, err.msg);
   }
 });
 
 // 获取用户信息
 router.get('/auth', new Auth(AUTH_ADMIN).m, async (ctx) => {
-
   // 获取用户ID
   const id = ctx.auth.uid;
 
   // 查询用户信息
   let [err, data] = await AdminDao.detail(id);
 
-  if(!err) {
+  if (!err) {
     // 返回结果
     ctx.response.status = 200;
     ctx.body = res.json(data)

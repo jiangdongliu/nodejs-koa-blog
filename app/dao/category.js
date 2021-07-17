@@ -1,4 +1,5 @@
-const {Category} = require('../models/category')
+const { Op } = require('sequelize')
+const { Category } = require('@models/category')
 
 class CategoryDao {
   // 创建分类
@@ -36,7 +37,7 @@ class CategoryDao {
       return [null, data]
 
     } catch (err) {
-      return  [err, null]
+      return [err, null]
     }
   }
 
@@ -58,8 +59,8 @@ class CategoryDao {
       const res = await category.destroy()
       return [null, res]
 
-    }catch (err) {
-        return [err, null]
+    } catch (err) {
+      return [err, null]
     }
   }
 
@@ -77,7 +78,7 @@ class CategoryDao {
       }
 
       return [null, category]
-    }catch (err) {
+    } catch (err) {
       return [err, null]
     }
   }
@@ -91,33 +92,62 @@ class CategoryDao {
     category.name = v.get('body.name');
     category.status = v.get('body.status');
     category.sort_order = v.get('body.sort_order');
-    category.parent_id = v.get('body.parent_id');
+    category.parent_id = v.get('body.parent_id') || 0;
 
     try {
       const res = await category.save();
-      return [res, null]
-    }catch (err) {
+      return [null, res]
+    } catch (err) {
       return [err, null]
     }
   }
 
   // 分类列表
-  static async list(v) {
-    const params = {
-      deleted_at: null
-    }
-    const status = v.get('body.status')
-    if(status) {
+  static async list(query = {}) {
+    const { status, name, id, page_size = 10, page = 1 } = query
+    let params = {}
+    if (status) {
       params.status = status
     }
 
-    try {
-      const res = await Category.scope('bh').findAll({
-        where: params
-      });
-      return [null, res]
+    if (name) {
+      params.name = {
+        [Op.like]: `%${name}%`
+      };
+    }
 
-    }catch (err) {
+    if (id) {
+      params.id = id
+    }
+
+    console.log('params', params)
+    try {
+      const category = await Category.scope('bh').findAndCountAll({
+        where: params,
+        // limit: page_size, //每页10条
+        offset: (page - 1) * page_size,
+        order: [
+          ['created_at', 'DESC']
+        ]
+      });
+
+      const data = {
+        data: category.rows,
+        // 分页
+        meta: {
+          current_page: parseInt(page),
+          per_page: 10,
+          count: category.count,
+          total: category.count,
+          total_pages: Math.ceil(category.count / 10),
+        }
+      }
+
+      return [null, data]
+
+    } catch (err) {
+      console.log('err', err)
+
       return [err, null]
     }
   }
