@@ -181,7 +181,6 @@ export default {
 .comment-textarea {
   margin-bottom: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #eee;
 }
 
 

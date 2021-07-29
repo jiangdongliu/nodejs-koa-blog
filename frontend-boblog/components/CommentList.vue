@@ -1,6 +1,6 @@
 <template>
-<div>
-  <div v-if="commentList" class="comment-list">
+<div v-if="Array.isArray(commentList) && commentList.length > 0">
+  <div  class="comment-list">
     <ul class="comment-box">
       <li
         v-for="(item, index) in commentList"
@@ -100,7 +100,28 @@ export default {
       return (this.userInfo && this.userInfo.id) || 0
     }
   },
+  mounted() {
+    this.getComment()
+  },
   methods: {
+    // 获取评论数据
+    async getComment() {
+      const [err, res] = await getCommentTarget({
+        article_id: this.$route.query.id,
+        is_replay: 1,
+        is_user: 1,
+        status: 1,
+        page: this.page
+      })
+      if (!err) {
+        res.data.data.data.forEach((item) => {
+          item.is_show_reply = false
+        })
+
+        this.commentList = res.data.data.data
+        this.count = res.data.data.meta.count
+      }
+    },
     // 点击页码
     async handleCurrentChange(page) {
       const drawerBody = document.querySelector('.el-drawer__body')
@@ -125,25 +146,6 @@ export default {
         }
       }
       animate()
-    },
-
-    // 获取评论数据
-    async getComment() {
-      const [err, res] = await getCommentTarget({
-        article_id: this.$route.query.id,
-        is_replay: 1,
-        is_user: 1,
-        status: 1,
-        page: this.page
-      })
-      if (!err) {
-        res.data.data.data.forEach((item) => {
-          item.is_show_reply = false
-        })
-
-        this.commentList = res.data.data.data
-        this.count = res.data.data.meta.count
-      }
     },
     // 渲染markdown内容
     mdRender(content) {

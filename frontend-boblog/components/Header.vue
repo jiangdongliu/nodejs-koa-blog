@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <div class="header-inner">
+      <div class="responsive-wrap header-inner">
         <div class="logo" @click="goHome"></div>
         <form class="search-box" action="/">
           <input
@@ -36,7 +36,7 @@
       </div>
 
       <div v-if="isCategory" class="category">
-        <ul v-if="Array.isArray(categoryList)" class="category-box">
+        <ul v-if="Array.isArray(categoryList)" class="responsive-wrap category-box">
           <li v-for="item in categoryList" :key="item.id" class="category-item">
             <NuxtLink
               class="category-item-link"
@@ -98,7 +98,6 @@ a{
 
 .header-inner {
   box-sizing: border-box;
-  width: 1024px;
   height: 64px;
   margin: 0 auto;
   display: flex;
@@ -156,7 +155,6 @@ a{
     padding: 0;
     display: flex;
     align-items: center;
-    width: 1024px;
     margin: 0 auto;
     height: 54px;
   }

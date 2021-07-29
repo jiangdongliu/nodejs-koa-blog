@@ -2,7 +2,7 @@
   <div>
     <Header />
 
-    <div class="article">
+    <div class="responsive-wrap article">
       <h1 class="title">
         {{ article.title }}
       </h1>
@@ -31,19 +31,10 @@
       </div>
     </div>
 
-    <div class="comment">
-      <div class="comment-header">评论：</div>
-      <div class="comment-textarea">
-        <textarea
-          ref="textarea"
-          class="comment-content"
-          placeholder="请输入内容，支持 Markdown 语法.."
-          @focus="onCommentFocus"
-        />
-      </div>
+    <div class="comment-container">
+      <Comment ref="comment" />
     </div>
 
-    <Comment ref="comment" />
     <Footer />
 
   </div>
@@ -93,26 +84,19 @@ export default {
     scrollTop() {
       this.$scrollTo(0)
     },
-    // 展开评论
-    onCommentFocus() {
-      this.$refs.textarea.blur()
-      this.$nextTick(() => {
-        this.onShowComment()
-      })
-    },
     // 点击展开评论
     onShowComment() {
-      this.$refs.comment && this.$refs.comment.onShowComment()
+      const comment = document.querySelector('.comment-container')
+      if(comment) {
+        const commentTop = comment.getBoundingClientRect().top
+        this.$scrollTo(commentTop)
+      }
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.article {
-  width: 840px;
-  margin: 0 auto;
-}
 
 .title {
   font-weight: 600;
@@ -150,37 +134,6 @@ export default {
   position: fixed;
   bottom: 32px;
   right: 32px;
-}
-
-.comment {
-  box-sizing: border-box;
-  padding: 20px 0;
-  width: 840px;
-  margin: 0 auto;
-
-  &-header {
-    padding-bottom: 20px;
-    font-size: 20px;
-    color: #404040;
-    font-weight: 600;
-  }
-
-  &-content {
-    resize: none;
-    outline: none;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 4px;
-    padding: 14px;
-    font-size: 14px;
-    color: #404040;
-    border: 1px solid #f0f0f0;
-    transition: 0.2s all ease-in;
-
-    &:focus {
-      box-shadow: rgba(0, 0, 0, 0.12) 0 2px 8px;
-    }
-  }
 }
 </style>
 

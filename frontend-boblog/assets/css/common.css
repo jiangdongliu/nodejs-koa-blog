@@ -57,6 +57,8 @@ code.hljs {
 .hljs {
   color: #abb2bf;
   font-size: 13px;
+  overflow: hidden;
+  overflow-x: scroll;
   background: #282c34
 }
 .hljs code {
@@ -120,4 +122,12 @@ code.hljs {
   align-items: center;
   justify-content: center;
   padding: 15px 0;
+}
+
+.responsive-wrap {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 960px;
+  padding: 0 24px;
+  margin: 0 auto;
 }

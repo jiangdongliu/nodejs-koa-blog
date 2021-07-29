@@ -18,3 +18,8 @@ export function validPassword(email) {
   const reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]/
   return reg.test(email)
 }
+
+export function isMobile() {
+  const isM = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+  return !!isM
+}

@@ -1,12 +1,6 @@
 <template>
   <div>
-    <el-drawer
-      size="38.2%"
-      :with-header="false"
-      :visible.sync="showComment"
-      direction="rtl"
-    >
-      <div class="comment">
+      <div class="responsive-wrap comment">
         <div class="comment-header">
           <span v-if="userInfo"> {{ userInfo.username }}， </span>
           欢迎您的评论
@@ -22,9 +16,9 @@
       </div>
 
       <el-drawer
-        size="32%"
+        :size="size"
+        :direction="direction"
         :with-header="false"
-        :append-to-body="true"
         :visible.sync="showPreviewContent"
       >
         <div class="comment">
@@ -34,20 +28,20 @@
       </el-drawer>
 
       <el-drawer
-        size="32%"
+        :size="size"
+        :direction="direction"
         :with-header="false"
-        :append-to-body="true"
         :visible.sync="showLoginInner"
       >
         <Login @on-success="onShowLoginInner"></Login>
       </el-drawer>
-    </el-drawer>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { getToken } from '@/lib/auth'
+import { isMobile } from '@/lib/utils'
 import Login from "./Login";
 import From from "./From";
 import CommentList from "./CommentList";
@@ -61,7 +55,8 @@ export default {
   },
   data() {
     return {
-      showComment: false,
+      direction: 'rtl',
+      size: '38.2%',
       previewContent: '',
       showPreviewContent: false,
       showLoginInner: false,
@@ -73,9 +68,20 @@ export default {
       isLoginStatus: (state) => state.user.isLoginStatus,
     }),
   },
+  mounted() {
+    this.initData()
+  },
   methods: {
+    // 获取数据-用户数据，评论列表数据
+    async initData() {
+      if (!this.isLoginStatus && getToken()) {
+        await this.$store.dispatch('user/userInfo')
+      }
+    },
     // 弹框登录
     onShowLoginInner(isShow) {
+      this.direction = isMobile() ? 'btt' : 'rtl'
+      this.size = isMobile() ? '72%' : '38.2%'
       this.showLoginInner = isShow
     },
     // 预览内容
@@ -87,21 +93,6 @@ export default {
 
       this.previewContent = this.mdRender(content)
       this.showPreviewContent = !this.showPreviewContent
-    },
-    // 展开侧边栏，获取数据-用户数据，评论列表数据
-    async onShowComment() {
-      this.showComment = true
-
-      if (!this.isLoginStatus && getToken()) {
-        await this.$store.dispatch('user/userInfo')
-      }
-
-      if (!this.isLoad) {
-        this.isLoad = true
-        this.$nextTick(() => {
-          this.$refs.commentList && this.$refs.commentList.getComment()
-        })
-      }
     },
     // 渲染markdown内容
     mdRender(content) {
@@ -120,12 +111,14 @@ p {
 }
 .comment {
   box-sizing: border-box;
-  padding: 20px;
-  width: 100%;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  margin: 32px auto;
+  border-top: 1px solid #eee;
 
   &-header {
     padding-bottom: 10px;
-    font-size: 20px;
+    font-size: 24px;
     color: #404040;
     font-weight: 600;
   }

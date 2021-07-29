@@ -166,7 +166,7 @@ export default {
 .login {
   box-sizing: border-box;
   width: 100%;
-  padding: 20px;
+  padding: 0 20px;
 }
 .login-header {
   display: none;
