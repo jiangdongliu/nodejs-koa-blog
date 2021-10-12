@@ -93,7 +93,15 @@ export default {
       is_admin: 1,
     })
 
-    if (!err) {
+    if (err) {
+      return {
+        page,
+        count: 0,
+        categoryId: category_id,
+        article: {  }
+      }
+
+    }else{
       return {
         page,
         count: res.data.data.meta.count,

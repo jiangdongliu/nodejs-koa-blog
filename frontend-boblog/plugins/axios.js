@@ -18,6 +18,11 @@ export default ({ $axios, store }) => {
 
   $axios.onError(err => {
     const { response } = err
+    if(!response){
+      console.error(err)
+      return Promise.reject(err)
+    }
+
 
     // 处理token过期无效情况，清除token，初始化store数据
     if ([401, 403].includes(response.status)) {
