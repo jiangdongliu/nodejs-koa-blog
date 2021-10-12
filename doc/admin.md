@@ -30,7 +30,6 @@ password2 | 确认密码 | 是
 ```
 POST    /admin/login
 ```
-```
 ### 参数说明
 参数 | 说明 | 是否必填
 ---|---|:---:
@@ -44,6 +43,7 @@ password | 密码 | 是
     "msg": "登录成功",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjMsInNjb3BlIjoxNiwiaWF0IjoxNTYwNTE0NzQwLCJleHAiOjE1NjA1MTgzNDB9.E7k-3bFWizGq2ykrmBgIF0Ng-2oPI70RdhvRTJ3GC4Y"
 }
+
 ```
 ## 管理员身份验证
 ```
